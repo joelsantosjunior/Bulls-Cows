@@ -1,5 +1,7 @@
 #include "FBullCowGame.h"
 #include <iostream>
+#include <map>
+#define TMap std::map
 
 FBullCowGame::FBullCowGame() { Reset(); }
 
@@ -10,7 +12,7 @@ bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
 
 void FBullCowGame::Reset()
 {	constexpr int32 MAX_TRIES = 4;
-	const FString HIDDEN_WORD = "nop";
+	const FString HIDDEN_WORD = "planet";
 
 	MyMaxTries = MAX_TRIES;	
 	MyHiddenWord = HIDDEN_WORD;
@@ -18,10 +20,23 @@ void FBullCowGame::Reset()
 	bGameIsWon = false;
 }
 
+
+
 EGuessStatus FBullCowGame::CheckGuessValidity(FString guess) const
 {	
 	if (FBullCowGame::GetHiddenWordLength() != guess.length())
+	{
 		return EGuessStatus::Wrong_Length;
+	}
+	else if (!FBullCowGame::IsIsogram(guess))
+	{
+		return EGuessStatus::Not_Ispgram;
+	}
+	else if (!FBullCowGame::IsLowerCase(guess))
+	{
+		return EGuessStatus::Not_Lowercase;
+	}
+		
 
 	
 	return EGuessStatus::OK;
@@ -58,16 +73,34 @@ FBullCowCount FBullCowGame::SubmitValidGuess(FString guess)
 	return BullCowCount;
 }
 
-bool FBullCowGame::IsIsogram(FString guess)
-{	
-	bool IsIsogramN = true;
-	FString Copy = guess;
-	for (int32 GChar = 0; GChar < GetHiddenWordLength(); GChar++)
-	{	for (int32 CChar = 0; CChar < GetHiddenWordLength(); CChar++)
-		{	if(guess[GChar] == Copy[CChar] && (GChar != CChar))
-			IsIsogramN = false;
+bool FBullCowGame::IsIsogram(FString guess) const
+{
+	if (guess.length() <= 1) { return true; }
+
+	TMap<char, bool> LetterSeen;
+	for (auto Letter : guess)
+	{
+		Letter = tolower(Letter);
+		if (LetterSeen[Letter])
+		{
+			return false;
+		}
+		else {
+			LetterSeen[Letter] = true;
 		}
 	}
-	return IsIsogramN;
+
+	return true;
 }
 
+bool FBullCowGame::IsLowerCase(FString guess) const
+{
+	for (auto Letter : guess)
+	{
+		if (!islower(Letter))
+		{
+			return false;
+		}
+	}
+	return true;
+}

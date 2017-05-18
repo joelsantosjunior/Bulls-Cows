@@ -22,10 +22,9 @@ public:
 	bool IsGameWon() const;
 
 	EGuessStatus CheckGuessValidity(FString) const; // TODO make a more rich return value
-	
 	FBullCowCount SubmitValidGuess(FString guess);
 
-	bool IsIsogram(FString guess);
+	
 
 	void Reset(); // TODO make a more rich return value	
 
@@ -35,4 +34,7 @@ private:
 	int32 MyMaxTries;
 	FString MyHiddenWord;
 	bool bGameIsWon;
+
+	bool IsIsogram(FString guess) const;
+	bool IsLowerCase(FString guess) const;
 };
